@@ -3,1081 +3,881 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>时尚电商App</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>精准预约管理后台 - 患者分类管理</title>
     <style>
+        /* 设计系统基础样式 */
         :root {
-            --primary-color: #FF5733;
-            --bg-color: #F5F5F5;
-            --text-dark: #333333;
-            --text-light: #666666;
-            --text-lighter: #999999;
+            /* 主色 */
+            --primary: #007BFF;
+            --success: #28A745;
+            --danger: #DC3545;
+            --warning: #FFC107;
+            --info: #17A2B8;
+            
+            /* 中性色 */
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --border: #E5E5E5;
+            --bg: #F6F8FA;
             --white: #FFFFFF;
-            --border-color: #EEEEEE;
-            --success-color: #4CAF50;
-            --danger-color: #F44336;
+            
+            /* 阴影 */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+            
+            /* 圆角 */
+            --radius-sm: 2px;
+            --radius-md: 4px;
+            --radius-lg: 8px;
         }
-
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            font-family: "Noto Sans SC", "Microsoft YaHei", sans-serif;
         }
-
+        
         body {
-            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-dark);
+            background-color: var(--bg);
+            color: var(--text-primary);
+            font-size: 14px;
             line-height: 1.5;
+        }
+        
+        /* 布局样式 */
+        .layout {
             display: flex;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            padding: 20px;
         }
-
-        /* 设备样式 */
-        .device {
-            width: 390px;
-            height: 844px;
-            background-color: var(--white);
-            border-radius: 40px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 10px solid #222;
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 256px;
+            background-color: #2D3748;
+            color: var(--white);
+            box-shadow: var(--shadow-md);
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+            overflow-y: auto;
         }
-
-        /* 状态栏 */
-        .status-bar {
-            height: 44px;
-            background-color: var(--white);
+        
+        .sidebar-logo {
+            height: 64px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
             padding: 0 16px;
-            font-size: 14px;
-            font-weight: 500;
+            font-size: 18px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .status-bar .time {
-            font-weight: bold;
+        
+        .sidebar-menu {
+            padding: 16px 0;
         }
-
-        .status-bar .icons {
+        
+        .menu-item {
+            padding: 12px 16px;
             display: flex;
-            gap: 5px;
-        }
-
-        /* 主容器 */
-        .app-container {
-            height: calc(100% - 94px); /* 状态栏 + 底部导航高度 */
-            overflow-y: auto;
-            position: relative;
-        }
-
-        /* 底部导航 */
-        .bottom-nav {
-            height: 50px;
-            display: flex;
-            justify-content: space-around;
             align-items: center;
-            background-color: var(--white);
-            border-top: 1px solid var(--border-color);
-            position: absolute;
-            bottom: 0;
-            width: 100%;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-
-        .nav-item {
+        
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-item.active {
+            background-color: var(--primary);
+        }
+        
+        .submenu {
+            padding-left: 24px;
+        }
+        
+        .submenu .menu-item {
+            font-size: 13px;
+            padding: 8px 16px;
+        }
+        
+        /* 主内容区域样式 */
+        .main-content {
+            flex: 1;
+            margin-left: 256px;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            color: var(--text-lighter);
-            width: 25%;
-            height: 100%;
-            text-decoration: none;
         }
-
-        .nav-item.active {
-            color: var(--primary-color);
-        }
-
-        .nav-item svg {
-            margin-bottom: 4px;
-            width: 24px;
-            height: 24px;
-        }
-
-        /* 页面内容 */
-        .screen {
-            display: none;
-            height: 100%;
-            overflow-y: auto;
-            background-color: var(--bg-color);
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        /* 通用元素样式 */
-        .header {
-            height: 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 16px;
+        
+        /* 顶部导航栏样式 */
+        .navbar {
+            height: 64px;
             background-color: var(--white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 99;
+            box-shadow: var(--shadow-sm);
         }
-
-        .header h1 {
-            font-size: 18px;
-            font-weight: 500;
+        
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 auto;
         }
-
-        .btn {
-            border: none;
-            background-color: var(--primary-color);
-            color: var(--white);
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .btn:hover, .btn:active {
-            background-color: #e74c3c;
-        }
-
-        .btn-outline {
-            border: 1px solid var(--primary-color);
-            background-color: transparent;
-            color: var(--primary-color);
-        }
-
-        .btn-outline:hover, .btn-outline:active {
-            background-color: rgba(255, 87, 51, 0.1);
-        }
-
-        /* 首页样式 */
-        .banner {
-            height: 200px;
+        
+        .search-box input {
             width: 100%;
-            background-color: #f7f7f7;
-            position: relative;
-            overflow: hidden;
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+            padding-left: 40px;
+            transition: all 0.3s;
         }
-
-        .banner img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            padding: 16px;
-            background-color: var(--white);
-        }
-
-        .category {
+        
+        .navbar-right {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .notification-icon, .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .user-avatar {
+            background-color: var(--primary);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        /* 内容区域样式 */
+        .content-wrapper {
+            padding: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 16px;
+            color: var(--text-tertiary);
+        }
+        
+        .breadcrumb a {
+            color: var(--text-tertiary);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            color: var(--primary);
+        }
+        
+        .page-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--bg);
+        }
+        
+        .card {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            background-color: var(--bg);
+        }
+        
+        .card-body {
+            padding: 16px;
+        }
+        
+        /* 筛选区域样式 */
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .filter-item {
+            display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        .category-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 25px;
-            background-color: rgba(255, 87, 51, 0.1);
+        
+        .filter-label {
+            color: var(--text-secondary);
+        }
+        
+        .filter-input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+        }
+        
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead tr {
+            background-color: var(--bg);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+        }
+        
+        th {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: background-color 0.3s;
+        }
+        
+        tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .table-action {
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .table-action:hover {
+            background-color: var(--bg);
+        }
+        
+        .table-action.delete:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 24px;
+        }
+        
+        .pagination-info {
+            color: var(--text-tertiary);
+            margin-right: 16px;
+        }
+        
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .pagination-btn {
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary-color);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.3s;
         }
-
-        .category span {
-            font-size: 12px;
+        
+        .pagination-btn:hover {
+            background-color: var(--bg);
         }
-
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            padding: 16px;
+        
+        .pagination-btn.active {
+            background-color: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
         }
-
-        .product-card {
-            background-color: var(--white);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .product-card img {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-        }
-
-        .product-info {
-            padding: 12px;
-        }
-
-        .product-title {
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .product-price {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .section-title {
-            padding: 16px 16px 0;
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-        /* 登录和注册表单 */
-        .form-container {
-            padding: 24px 16px;
-            height: 100%;
+        
+        /* 模态框样式 */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
         }
-
-        .form-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            text-align: center;
+        
+        .modal {
+            background-color: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 500px;
+            max-width: 90%;
         }
-
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-tertiary);
+        }
+        
+        .modal-body {
+            padding: 24px 16px;
+        }
+        
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        /* 表单样式 */
         .form-group {
             margin-bottom: 16px;
         }
-
-        .form-group label {
+        
+        .form-label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
+            font-weight: 600;
         }
-
-        .form-control {
+        
+        .form-input, .form-select, .form-textarea {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.2s;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            transition: all 0.3s;
         }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
         }
-
-        .form-footer {
-            margin-top: 24px;
-            text-align: center;
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
         }
-
-        .form-link {
-            color: var(--primary-color);
-            text-decoration: none;
+        
+        .form-helper {
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text-tertiary);
         }
-
-        /* 商品详情页 */
-        .product-detail {
-            padding-bottom: 70px;
-        }
-
-        .product-gallery {
-            height: 300px;
-            position: relative;
-        }
-
-        .product-gallery img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .product-detail-info {
-            padding: 16px;
-            background-color: var(--white);
-            border-radius: 20px 20px 0 0;
-            margin-top: -20px;
-            position: relative;
-        }
-
-        .product-detail-price {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-        }
-
-        .product-detail-title {
-            font-size: 18px;
-            margin-bottom: 12px;
-        }
-
-        .product-detail-desc {
-            margin-top: 16px;
-            color: var(--text-light);
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .action-bar {
-            position: fixed;
-            bottom: 50px;
-            left: 0;
-            right: 0;
-            display: flex;
-            padding: 12px 16px;
-            background-color: var(--white);
-            border-top: 1px solid var(--border-color);
-            z-index: 100;
-        }
-
-        .add-to-cart-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background-color: var(--primary-color);
-            color: var(--white);
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
-        /* 购物车 */
-        .cart-list {
-            padding: 16px;
-        }
-
-        .cart-item {
-            display: flex;
-            margin-bottom: 16px;
-            background-color: var(--white);
+        
+        /* 标签徽章样式 */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
             border-radius: 12px;
-            padding: 12px;
+            font-size: 12px;
         }
-
-        .cart-item-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-right: 12px;
+        
+        .badge-primary {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: var(--primary);
         }
-
-        .cart-item-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        
+        .badge-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
         }
-
-        .cart-item-info {
-            flex: 1;
+        
+        .badge-warning {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
         }
-
-        .cart-item-title {
-            font-size: 14px;
-            margin-bottom: 4px;
+        
+        .badge-danger {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
         }
-
-        .cart-item-price {
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 4px;
+        
+        .badge-info {
+            background-color: rgba(23, 162, 184, 0.1);
+            color: var(--info);
         }
-
-        .cart-item-quantity {
+        
+        /* 状态徽章 */
+        .status-badge {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        
+        .status-active {
+            background-color: var(--success);
+        }
+        
+        .status-inactive {
+            background-color: var(--text-tertiary);
+        }
+        
+        /* 颜色选择器样式 */
+        .color-picker {
             display: flex;
-            align-items: center;
+            gap: 12px;
             margin-top: 8px;
         }
-
-        .quantity-btn {
-            width: 28px;
-            height: 28px;
+        
+        .color-option {
+            width: 24px;
+            height: 24px;
             border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background-color: var(--white);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .quantity-input {
-            width: 40px;
-            text-align: center;
-            border: none;
-            margin: 0 8px;
-            font-size: 14px;
-        }
-
-        .cart-summary {
-            background-color: var(--white);
-            padding: 16px;
-            /* position: fixed;
-            bottom: 50px;
-            left: 0;
-            right: 0; */
-            border-top: 1px solid var(--border-color);
-        }
-
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .cart-total-label {
-            font-weight: 500;
-        }
-
-        .cart-total-value {
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-
-        .checkout-btn {
-            width: 100%;
+            cursor: pointer;
+            position: relative;
+            border: 1px solid var(--border);
         }
         
-        /* 启动屏 */
-        .splash-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            background-color: var(--primary-color);
-            color: var(--white);
+        .color-option.selected:after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
         }
         
-        .splash-logo {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-        
-        .splash-subtext {
-            font-size: 18px;
-            opacity: 0.8;
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 设备框架 -->
-    <div class="device">
-        <!-- 状态栏 -->
-        <div class="status-bar">
-            <div class="time">9:41</div>
-            <div class="icons">
-                <span>📶</span>
-                <span>📡</span>
-                <span>🔋</span>
-            </div>
-        </div>
-        
-        <!-- 应用容器 -->
-        <div class="app-container">
-            <!-- 启动页 -->
-            <div class="screen" id="splash-screen">
-                <div class="splash-screen">
-                    <div class="splash-logo">Fashion+</div>
-                    <p class="splash-subtext">时尚触手可及</p>
-                </div>
+    <!-- 主布局容器 -->
+    <div class="layout">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <span>精准预约管理</span>
             </div>
             
-            <!-- 登录页 -->
-            <div class="screen" id="login-screen">
-                <div class="form-container">
-                    <h2 class="form-title">欢迎回来</h2>
-                    <div class="form-group">
-                        <label for="login-phone">手机号码</label>
-                        <input type="tel" id="login-phone" class="form-control" placeholder="请输入手机号码">
-                    </div>
-                    <div class="form-group">
-                        <label for="login-password">密码</label>
-                        <input type="password" id="login-password" class="form-control" placeholder="请输入密码">
-                    </div>
-                    <button class="btn" style="width:100%; margin-top: 24px;">登录</button>
-                    <div class="form-footer">
-                        <p>还没有账号？ <a href="#" class="form-link" id="show-register">立即注册</a></p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 注册页 -->
-            <div class="screen" id="register-screen">
-                <div class="form-container">
-                    <h2 class="form-title">创建账号</h2>
-                    <div class="form-group">
-                        <label for="register-phone">手机号码</label>
-                        <input type="tel" id="register-phone" class="form-control" placeholder="请输入手机号码">
-                    </div>
-                    <div class="form-group">
-                        <label for="register-code">验证码</label>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="register-code" class="form-control" placeholder="请输入验证码" style="flex: 1;">
-                            <button class="btn btn-outline" style="width: 100px;">获取验证码</button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="register-password">设置密码</label>
-                        <input type="password" id="register-password" class="form-control" placeholder="请设置密码">
-                    </div>
-                    <button class="btn" style="width:100%; margin-top: 24px;">注册</button>
-                    <div class="form-footer">
-                        <p>已有账号？ <a href="#" class="form-link" id="show-login">去登录</a></p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 首页 -->
-            <div class="screen active" id="home-screen">
-                <div class="header">
-                    <h1>Fashion+</h1>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <div class="sidebar-menu">
+                <div class="menu-item">
+                    <i>📊</i>
+                    <span>首页</span>
                 </div>
                 
-                <div class="banner">
-                    <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1470&q=80" alt="时尚服装banner">
+                <div class="menu-item active">
+                    <i>👥</i>
+                    <span>患者管理</span>
                 </div>
                 
-                <div class="categories">
-                    <div class="category">
-                        <div class="category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                        </div>
-                        <span>服装</span>
+                <div class="submenu">
+                    <div class="menu-item">
+                        <span>患者列表</span>
                     </div>
-                    <div class="category">
-                        <div class="category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                        </div>
-                        <span>电子</span>
+                    <div class="menu-item active">
+                        <span>分类管理</span>
                     </div>
-                    <div class="category">
-                        <div class="category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                        </div>
-                        <span>美妆</span>
-                    </div>
-                    <div class="category">
-                        <div class="category-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-                        </div>
-                        <span>家居</span>
+                    <div class="menu-item">
+                        <span>预约记录</span>
                     </div>
                 </div>
                 
-                <h2 class="section-title">热门商品</h2>
-                <div class="product-grid">
-                    <div class="product-card" id="product-1">
-                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="时尚连衣裙">
-                        <div class="product-info">
-                            <h3 class="product-title">2024春季新款女士连衣裙</h3>
-                            <div class="product-price">¥299</div>
-                        </div>
-                    </div>
-                    <div class="product-card" id="product-2">
-                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="智能手表">
-                        <div class="product-info">
-                            <h3 class="product-title">全新智能运动手表</h3>
-                            <div class="product-price">¥799</div>
-                        </div>
-                    </div>
-                    <div class="product-card" id="product-3">
-                        <img src="https://images.unsplash.com/photo-1560343090-f0409e92791a?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="运动鞋">
-                        <div class="product-info">
-                            <h3 class="product-title">轻便透气男士运动鞋</h3>
-                            <div class="product-price">¥499</div>
-                        </div>
-                    </div>
-                    <div class="product-card" id="product-4">
-                        <img src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="无线耳机">
-                        <div class="product-info">
-                            <h3 class="product-title">高品质无线蓝牙耳机</h3>
-                            <div class="product-price">¥599</div>
-                        </div>
-                    </div>
-                </div>
-
-                <h2 class="section-title">热销爆品</h2>
-                <div class="product-grid">
-                    <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80" alt="女士手提包">
-                        <div class="product-info">
-                            <h3 class="product-title">高级质感女士手提包</h3>
-                            <div class="product-price">¥899</div>
-                        </div>
-                    </div>
-                    <div class="product-card">
-                        <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80" alt="护肤套装">
-                        <div class="product-info">
-                            <h3 class="product-title">天然有机护肤套装</h3>
-                            <div class="product-price">¥459</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 商品详情页 -->
-            <div class="screen" id="product-detail-screen">
-                <div class="header">
-                    <a href="#" class="back-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                    </a>
-                    <h1>商品详情</h1>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                <div class="menu-item">
+                    <i>👨‍⚕️</i>
+                    <span>医生管理</span>
                 </div>
                 
-                <div class="product-detail">
-                    <div class="product-gallery">
-                        <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80" alt="2024春季新款女士连衣裙">
-                    </div>
-                    
-                    <div class="product-detail-info">
-                        <div class="product-detail-price">¥299</div>
-                        <h2 class="product-detail-title">2024春季新款女士连衣裙</h2>
-                        
-                        <div style="display: flex; margin-bottom: 16px;">
-                            <span style="background-color: #F5F5F5; border-radius: 4px; padding: 4px 8px; font-size: 12px; margin-right: 8px;">免运费</span>
-                            <span style="background-color: #F5F5F5; border-radius: 4px; padding: 4px 8px; font-size: 12px; margin-right: 8px;">7天无理由退换</span>
-                        </div>
-                        
-                        <div style="display: flex; margin-bottom: 16px; align-items: center;">
-                            <span style="font-size: 14px; color: var(--text-light); margin-right: 16px;">颜色</span>
-                            <div style="display: flex; gap: 8px;">
-                                <div style="width: 28px; height: 28px; border-radius: 50%; background-color: #000; border: 2px solid var(--primary-color);"></div>
-                                <div style="width: 28px; height: 28px; border-radius: 50%; background-color: #FFF; border: 1px solid #EEE;"></div>
-                                <div style="width: 28px; height: 28px; border-radius: 50%; background-color: #6A7D8F; border: 1px solid #EEE;"></div>
-                            </div>
-                        </div>
-                        
-                        <div style="display: flex; margin-bottom: 16px; align-items: center;">
-                            <span style="font-size: 14px; color: var(--text-light); margin-right: 16px;">尺码</span>
-                            <div style="display: flex; gap: 8px;">
-                                <span style="padding: 4px 12px; border: 1px solid #EEE; border-radius: 4px; font-size: 14px;">S</span>
-                                <span style="padding: 4px 12px; border: 1px solid var(--primary-color); border-radius: 4px; font-size: 14px; color: var(--primary-color);">M</span>
-                                <span style="padding: 4px 12px; border: 1px solid #EEE; border-radius: 4px; font-size: 14px;">L</span>
-                                <span style="padding: 4px 12px; border: 1px solid #EEE; border-radius: 4px; font-size: 14px;">XL</span>
-                            </div>
-                        </div>
-                        
-                        <div class="product-detail-desc">
-                            <h3 style="margin-bottom: 8px; font-size: 16px;">商品详情</h3>
-                            <p>这款2024春季新款女士连衣裙采用优质面料，手感柔软，穿着舒适。采用简约设计风格，精致的剪裁完美勾勒出女性优雅的线条。适合各种场合穿着，无论是日常通勤还是聚会约会，都能让你展现自信魅力。</p>
-                            <p style="margin-top: 8px;">材质：95% 聚酯纤维，5% 氨纶<br>
-                            洗涤说明：30°C以下温和机洗，不可漂白，不可烘干</p>
-                        </div>
-                    </div>
-                    
-                    <div class="action-bar">
-                        <button class="add-to-cart-btn">加入购物车</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 购物车页面 -->
-            <div class="screen" id="cart-screen">
-                <div class="header">
-                    <h1>购物车</h1>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <div class="menu-item">
+                    <i>🏥</i>
+                    <span>诊疗中心</span>
                 </div>
                 
-                <div class="cart-list" style="padding-bottom: 120px;">
-                    <div class="cart-item">
-                        <div class="cart-item-img">
-                            <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="时尚连衣裙">
-                        </div>
-                        <div class="cart-item-info">
-                            <h3 class="cart-item-title">2024春季新款女士连衣裙</h3>
-                            <p style="font-size: 12px; color: var(--text-lighter);">颜色：黑色 | 尺码：M</p>
-                            <div class="cart-item-price">¥299</div>
-                            <div class="cart-item-quantity">
-                                <button class="quantity-btn">-</button>
-                                <input type="text" class="quantity-input" value="1" readonly>
-                                <button class="quantity-btn">+</button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="cart-item">
-                        <div class="cart-item-img">
-                            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="智能手表">
-                        </div>
-                        <div class="cart-item-info">
-                            <h3 class="cart-item-title">全新智能运动手表</h3>
-                            <p style="font-size: 12px; color: var(--text-lighter);">颜色：黑色</p>
-                            <div class="cart-item-price">¥799</div>
-                            <div class="cart-item-quantity">
-                                <button class="quantity-btn">-</button>
-                                <input type="text" class="quantity-input" value="1" readonly>
-                                <button class="quantity-btn">+</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cart-summary">
-                    <div class="cart-total">
-                        <span class="cart-total-label">总计 (2件商品)</span>
-                        <span class="cart-total-value">¥1098</span>
-                    </div>
-                    <button class="btn checkout-btn">结算</button>
-                </div>
-            </div>
-            
-            <!-- 个人中心页面 -->
-            <div class="screen" id="profile-screen">
-                <div class="header">
-                    <h1>我的账户</h1>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
-                </div>
-                
-                <div style="padding: 20px;">
-                    <div style="display: flex; align-items: center; margin-bottom: 24px;">
-                        <div style="width: 64px; height: 64px; border-radius: 50%; background-color: #F5F5F5; overflow: hidden; margin-right: 16px;">
-                            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=80" alt="用户头像" style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                        <div>
-                            <h3 style="font-size: 18px; margin-bottom: 4px;">张小美</h3>
-                            <p style="font-size: 14px; color: var(--text-light);">VIP会员</p>
-                        </div>
-                    </div>
-                    
-                    <div style="background-color: var(--white); border-radius: 12px; margin-bottom: 20px;">
-                        <div style="padding: 16px; border-bottom: 1px solid var(--border-color);">
-                            <h3 style="font-size: 16px; margin-bottom: 16px;">我的订单</h3>
-                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); text-align: center;">
-                                <div style="display: flex; flex-direction: column; align-items: center;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                                    <span style="font-size: 12px; margin-top: 8px;">待付款</span>
-                                </div>
-                                <div style="display: flex; flex-direction: column; align-items: center;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                    <span style="font-size: 12px; margin-top: 8px;">待发货</span>
-                                </div>
-                                <div style="display: flex; flex-direction: column; align-items: center;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"></path><path d="M4 4a16 16 0 0 1 16 16"></path><circle cx="5" cy="19" r="1"></circle></svg>
-                                    <span style="font-size: 12px; margin-top: 8px;">待收货</span>
-                                </div>
-                                <div style="display: flex; flex-direction: column; align-items: center;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    <span style="font-size: 12px; margin-top: 8px;">待评价</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="background-color: var(--white); border-radius: 12px;">
-                        <div style="padding: 16px 16px 0;">
-                            <h3 style="font-size: 16px; margin-bottom: 8px;">我的服务</h3>
-                        </div>
-                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); padding: 16px; gap: 16px;">
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">收藏夹</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">收货地址</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">健康码</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">客服中心</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">优惠券</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">钱包</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">积分</span>
-                            </div>
-                            <div style="display: flex; flex-direction: column; align-items: center;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                                <span style="font-size: 12px; margin-top: 8px;">设置</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 设置页面 -->
-            <div class="screen" id="settings-screen">
-                <div class="header">
-                    <h1>设置</h1>
-                </div>
-                
-                <div style="padding: 16px;">
-                    <div style="background-color: var(--white); border-radius: 12px; overflow: hidden;">
-                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-                            <span>账号安全</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-                            <span>隐私设置</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-                            <span>通知设置</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-                            <span>支付管理</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-                            <span>清除缓存</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);">
-                            <span>关于我们</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        </div>
-                        <div style="padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-                            <span>检查更新</span>
-                            <div style="display: flex; align-items: center;">
-                                <span style="font-size: 14px; color: var(--text-lighter); margin-right: 8px;">v1.0.0</span>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button class="btn" style="width: 100%; margin-top: 30px; background-color: var(--danger-color);">退出登录</button>
+                <div class="menu-item">
+                    <i>⚙️</i>
+                    <span>系统配置</span>
                 </div>
             </div>
         </div>
         
-        <!-- 底部导航 -->
-        <div class="bottom-nav">
-            <a href="#" class="nav-item active" data-screen="home-screen">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                <span>首页</span>
-            </a>
-            <a href="#" class="nav-item" data-screen="cart-screen">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-                <span>购物车</span>
-            </a>
-            <a href="#" class="nav-item" data-screen="profile-screen">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span>我的</span>
-            </a>
-            <a href="#" class="nav-item" data-screen="settings-screen">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-                <span>设置</span>
-            </a>
+        <!-- 主内容区域 -->
+        <div class="main-content">
+            <!-- 顶部导航栏 -->
+            <div class="navbar">
+                <div class="search-box">
+                    <input type="text" placeholder="搜索...">
+                </div>
+                
+                <div class="navbar-right">
+                    <div class="user-avatar">
+                        A
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content-wrapper">
+                <!-- 面包屑导航 -->
+                <div class="breadcrumb">
+                    <a href="#">首页</a> / <a href="#">患者管理</a> / <span>分类管理</span>
+                </div>
+                
+                <!-- 页面标题和操作按钮 -->
+                <div class="page-title">
+                    <div class="title">患者分类管理</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary">+ 新建分类</button>
+                    </div>
+                </div>
+                
+                <!-- 分类管理卡片 -->
+                <div class="card">
+                    <div class="card-header">分类列表</div>
+                    <div class="card-body">
+                        <!-- 筛选区域 -->
+                        <div class="filter-section">
+                            <div class="filter-item">
+                                <span class="filter-label">分类名称:</span>
+                                <input type="text" class="filter-input" placeholder="请输入分类名称">
+                            </div>
+                            
+                            <div class="filter-item">
+                                <span class="filter-label">状态:</span>
+                                <select class="filter-input">
+                                    <option value="">全部</option>
+                                    <option value="active">启用</option>
+                                    <option value="inactive">禁用</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-item">
+                                <button class="btn btn-outline">筛选</button>
+                                <button class="btn btn-outline">重置</button>
+                            </div>
+                        </div>
+                        
+                        <!-- 表格区域 -->
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th width="60">序号</th>
+                                        <th width="200">分类名称</th>
+                                        <th>分类描述</th>
+                                        <th width="120">颜色标记</th>
+                                        <th width="80">状态</th>
+                                        <th width="100">患者数量</th>
+                                        <th width="150">创建时间</th>
+                                        <th width="150">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>高危患者</td>
+                                        <td>需要特别关注的高风险患者</td>
+                                        <td>
+                                            <span class="badge badge-danger">高危</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-active"></span>
+                                            启用
+                                        </td>
+                                        <td>253</td>
+                                        <td>2023-01-15</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <div class="table-action">编辑</div>
+                                                <div class="table-action">查看</div>
+                                                <div class="table-action delete">禁用</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>慢性病患者</td>
+                                        <td>需要长期管理和定期随访的慢性病患者</td>
+                                        <td>
+                                            <span class="badge badge-warning">慢性</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-active"></span>
+                                            启用
+                                        </td>
+                                        <td>512</td>
+                                        <td>2023-02-10</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <div class="table-action">编辑</div>
+                                                <div class="table-action">查看</div>
+                                                <div class="table-action delete">禁用</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>儿科患者</td>
+                                        <td>16岁以下儿童患者</td>
+                                        <td>
+                                            <span class="badge badge-info">儿科</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-active"></span>
+                                            启用
+                                        </td>
+                                        <td>362</td>
+                                        <td>2023-02-18</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <div class="table-action">编辑</div>
+                                                <div class="table-action">查看</div>
+                                                <div class="table-action delete">禁用</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>VIP患者</td>
+                                        <td>需要提供优先预约和特殊服务的VIP患者</td>
+                                        <td>
+                                            <span class="badge badge-primary">VIP</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-active"></span>
+                                            启用
+                                        </td>
+                                        <td>85</td>
+                                        <td>2023-03-05</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <div class="table-action">编辑</div>
+                                                <div class="table-action">查看</div>
+                                                <div class="table-action delete">禁用</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>老年患者</td>
+                                        <td>65岁以上需要特殊关注的老年患者</td>
+                                        <td>
+                                            <span class="badge badge-success">老年</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-active"></span>
+                                            启用
+                                        </td>
+                                        <td>429</td>
+                                        <td>2023-04-12</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <div class="table-action">编辑</div>
+                                                <div class="table-action">查看</div>
+                                                <div class="table-action delete">禁用</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>6</td>
+                                        <td>术后随访</td>
+                                        <td>手术后需要定期随访的患者</td>
+                                        <td>
+                                            <span class="badge badge-warning">随访</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge status-inactive"></span>
+                                            禁用
+                                        </td>
+                                        <td>0</td>
+                                        <td>2023-05-20</td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <div class="table-action">编辑</div>
+                                                <div class="table-action">查看</div>
+                                                <div class="table-action delete">启用</div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- 分页控件 -->
+                        <div class="pagination">
+                            <div class="pagination-info">
+                                显示 1-6，共 6 条
+                            </div>
+                            <div class="pagination-controls">
+                                <div class="pagination-btn">«</div>
+                                <div class="pagination-btn active">1</div>
+                                <div class="pagination-btn">»</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 新建/编辑分类模态框 -->
+                <div class="modal-backdrop" style="display: none;">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <div class="modal-title">新建分类</div>
+                            <div class="modal-close">×</div>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="form-label">分类名称</label>
+                                <input type="text" class="form-input" placeholder="请输入分类名称">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">分类描述</label>
+                                <textarea class="form-textarea" placeholder="请输入分类描述"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">颜色标记</label>
+                                <div class="color-picker">
+                                    <div class="color-option selected" style="background-color: #007BFF;"></div>
+                                    <div class="color-option" style="background-color: #28A745;"></div>
+                                    <div class="color-option" style="background-color: #DC3545;"></div>
+                                    <div class="color-option" style="background-color: #FFC107;"></div>
+                                    <div class="color-option" style="background-color: #17A2B8;"></div>
+                                </div>
+                                <div class="form-helper">选择一个颜色标记此分类</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">状态</label>
+                                <select class="form-select">
+                                    <option value="active">启用</option>
+                                    <option value="inactive">禁用</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">排序</label>
+                                <input type="number" class="form-input" value="0">
+                                <div class="form-helper">数字越小越靠前</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-outline">取消</button>
+                            <button class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <script>
-        // 等待页面加载完成
-        document.addEventListener('DOMContentLoaded', function() {
-            // 显示启动页，然后自动跳转到主页
-            const splashScreen = document.getElementById('splash-screen');
-            const loginScreen = document.getElementById('login-screen');
-            const registerScreen = document.getElementById('register-screen');
-            const homeScreen = document.getElementById('home-screen');
-            const productDetailScreen = document.getElementById('product-detail-screen');
-            const cartScreen = document.getElementById('cart-screen');
-            const profileScreen = document.getElementById('profile-screen');
-            const settingsScreen = document.getElementById('settings-screen');
-            
-            // 初始化：显示启动页
-            showScreen(splashScreen);
-            
-            // 2秒后自动跳转到登录页
-            setTimeout(() => {
-                showScreen(loginScreen);
-            }, 2000);
-            
-            // 注册/登录页面切换
-            document.getElementById('show-register').addEventListener('click', function(e) {
-                e.preventDefault();
-                showScreen(registerScreen);
-            });
-            
-            document.getElementById('show-login').addEventListener('click', function(e) {
-                e.preventDefault();
-                showScreen(loginScreen);
-            });
-            
-            // 底部导航切换
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    // 取消所有导航项的激活状态
-                    navItems.forEach(navItem => {
-                        navItem.classList.remove('active');
-                    });
-                    
-                    // 激活当前点击的导航项
-                    this.classList.add('active');
-                    
-                    // 根据导航项显示对应的屏幕
-                    const screenId = this.getAttribute('data-screen');
-                    const screenToShow = document.getElementById(screenId);
-                    
-                    if (screenToShow) {
-                        showScreen(screenToShow);
-                    }
-                });
-            });
-            
-            // 商品点击进入详情页
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    showScreen(productDetailScreen);
-                });
-            });
-            
-            // 返回按钮功能
-            const backButtons = document.querySelectorAll('.back-btn');
-            backButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showScreen(homeScreen);
-                    
-                    // 激活首页导航
-                    navItems.forEach(navItem => {
-                        navItem.classList.remove('active');
-                        if (navItem.getAttribute('data-screen') === 'home-screen') {
-                            navItem.classList.add('active');
-                        }
-                    });
-                });
-            });
-            
-            // 添加到购物车功能
-            const addToCartBtn = document.querySelector('.add-to-cart-btn');
-            if (addToCartBtn) {
-                addToCartBtn.addEventListener('click', function() {
-                    // 显示添加成功提示
-                    const toast = document.createElement('div');
-                    toast.style.position = 'fixed';
-                    toast.style.bottom = '100px';
-                    toast.style.left = '50%';
-                    toast.style.transform = 'translateX(-50%)';
-                    toast.style.padding = '12px 20px';
-                    toast.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-                    toast.style.color = 'white';
-                    toast.style.borderRadius = '8px';
-                    toast.style.zIndex = '1000';
-                    toast.textContent = '已添加到购物车';
-                    document.body.appendChild(toast);
-                    
-                    // 2秒后消失
-                    setTimeout(() => {
-                        document.body.removeChild(toast);
-                    }, 2000);
-                });
-            }
-            
-            // 购物车商品数量调整
-            const quantityBtns = document.querySelectorAll('.quantity-btn');
-            quantityBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const input = this.parentNode.querySelector('.quantity-input');
-                    let value = parseInt(input.value);
-                    
-                    if (this.textContent === '+') {
-                        value++;
-                    } else if (this.textContent === '-' && value > 1) {
-                        value--;
-                    }
-                    
-                    input.value = value;
-                    updateCartTotal();
-                });
-            });
-            
-            // 登录按钮功能
-            const loginBtn = document.querySelector('#login-screen .btn');
-            if (loginBtn) {
-                loginBtn.addEventListener('click', function() {
-                    showScreen(homeScreen);
-                });
-            }
-            
-            // 注册按钮功能
-            const registerBtn = document.querySelector('#register-screen .btn');
-            if (registerBtn) {
-                registerBtn.addEventListener('click', function() {
-                    showScreen(homeScreen);
-                });
-            }
-            
-            // 辅助函数：显示指定屏幕
-            function showScreen(screen) {
-                const allScreens = document.querySelectorAll('.screen');
-                allScreens.forEach(s => {
-                    s.classList.remove('active');
-                });
-                screen.classList.add('active');
-            }
-            
-            // 辅助函数：更新购物车总价
-            function updateCartTotal() {
-                // 在实际应用中，这里会计算购物车中所有商品的总价
-                // 这里只是演示，固定显示
-                document.querySelector('.cart-total-value').textContent = '¥1098';
-            }
-            
-            // 添加触摸反馈效果
-            const buttons = document.querySelectorAll('button, .product-card, .nav-item, .action-link');
-            buttons.forEach(button => {
-                button.addEventListener('touchstart', function() {
-                    this.style.opacity = '0.7';
-                });
-                
-                button.addEventListener('touchend', function() {
-                    this.style.opacity = '1';
-                });
-            });
-        });
-    </script>
 </body>
 </html> 
